@@ -1,0 +1,110 @@
+import * as React from "react";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import CloseIcon from "@mui/icons-material/Close";
+import Typography from "@mui/material/Typography";
+import SelectDate from "./selectDate";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import { Dayjs } from "dayjs";
+import "./modal.css";
+import { ApiService } from "../data/api";
+
+export default function CustomizedDialogs() {
+  const [open, setOpen] = React.useState(true);
+  const [startDate, setStartDate] = React.useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = React.useState<Dayjs | null>(null);
+  const [events, setEvents] = React.useState([]);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const searchEvents = async () => {
+    const startDateInMilliseconds = startDate ? startDate.valueOf() : null;
+    const endDateInMilliseconds = endDate ? endDate.valueOf() : null;
+    if (startDateInMilliseconds !== null && endDateInMilliseconds !== null) {
+      try {
+        const response = await ApiService.Events.getEventsBetweenDates(
+          0,
+          1719216726488
+        );
+        setEvents(response.data);
+        console.log("Start Date in milliseconds:", startDateInMilliseconds);
+        console.log("End Date in milliseconds:", endDateInMilliseconds);
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+      }
+    }
+
+    setOpen(false);
+  };
+
+  React.useEffect(() => {
+    console.log(events);
+  }, [events]);
+
+  return (
+    <React.Fragment>
+      <Button variant="outlined" onClick={handleClickOpen}>
+        התחל בחיפוש
+      </Button>
+      <Dialog
+        onClose={handleClose}
+        aria-labelledby="customized-dialog-title"
+        open={open}
+      >
+        <CloseIcon onClick={handleClose} className="close-button" />
+
+        <DialogTitle
+          fontSize={36}
+          id="customized-dialog-title"
+          className="dialog-title"
+        >
+          select date range
+        </DialogTitle>
+
+        <DialogContent className="dialog-content" sx={{ justifyContent: "center" }}>
+          <Box sx={{ width: "100%" ,justifyContent: "center"}}>
+            <Grid
+              container
+              maxWidth="sm"
+              rowSpacing={2}
+              sx={{ width: "100%", justifyContent: "center" }}
+            >
+              <Grid item xs={9}>
+                <Typography gutterBottom>select start date</Typography>
+                <SelectDate
+                  text="start date"
+                  selectedDate={startDate}
+                  setSelectedDate={setStartDate}
+                />
+              </Grid>
+              <Grid item xs={9}>
+                <Typography gutterBottom>select end date</Typography>
+                <SelectDate
+                  text="end date"
+                  selectedDate={endDate}
+                  setSelectedDate={setEndDate}
+                />
+              </Grid>
+            </Grid>
+          </Box>
+        </DialogContent>
+        <DialogActions
+          className="dialog-actions"
+          sx={{ justifyContent: "center" }}
+        >
+          <Button onClick={searchEvents}>search events</Button>
+        </DialogActions>
+      </Dialog>
+    </React.Fragment>
+  );
+}
