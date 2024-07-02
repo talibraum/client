@@ -11,14 +11,26 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { Dayjs } from "dayjs";
 import "./modal.css";
+import EventList from "./eventsList";
 import { ApiService } from "../data/api";
+import LoadingGif from "./loadingGif";
 import Swal from "sweetalert2";
 
 export default function CustomizedDialogs() {
   const [open, setOpen] = React.useState(true);
+  const [listShown, setlistShown] = React.useState(false);
   const [startDate, setStartDate] = React.useState<Dayjs | null>(null);
   const [endDate, setEndDate] = React.useState<Dayjs | null>(null);
   const [events, setEvents] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+
+  const openList = () => {
+    setlistShown(true);
+  };
+
+  const closeList = () => {
+    setlistShown(false);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -32,36 +44,52 @@ export default function CustomizedDialogs() {
     const startDateInMilliseconds = startDate ? startDate.valueOf() : null;
     const endDateInMilliseconds = endDate ? endDate.valueOf() : null;
     if (startDateInMilliseconds !== null && endDateInMilliseconds !== null) {
-      try {
-        const response = await ApiService.Events.getEventsBetweenDates(
-          startDateInMilliseconds,
-          endDateInMilliseconds
-        );
-        if ((response.data).length === 0) {
-          Swal.fire({
-            icon: "info",
-            text: "no events were found between these dates",
-            showConfirmButton: false,
-            timer: 2000,
-            customClass: {
-              container: "sweetalert-z-index",
-            },
-          });
-        } else {
-          setEvents(response.data);
-          setOpen(false);
-        }
-      } catch (error) {
+      if (startDateInMilliseconds > endDateInMilliseconds) {
         Swal.fire({
           icon: "error",
-          title: "Error",
-          text: "failed to find events",
+          text: "end date must be after start date",
           showConfirmButton: false,
           timer: 1500,
           customClass: {
             container: "sweetalert-z-index",
           },
         });
+      } else {
+        try {
+          setLoading(true);
+          const response = await ApiService.Events.getEventsBetweenDates(
+            startDateInMilliseconds,
+            endDateInMilliseconds
+          );
+          setLoading(false);
+
+          if (response.data.length === 0) {
+            Swal.fire({
+              icon: "info",
+              text: "no events were found between these dates",
+              showConfirmButton: false,
+              timer: 2000,
+              customClass: {
+                container: "sweetalert-z-index",
+              },
+            });
+          } else {
+            setEvents(response.data);
+            setOpen(false);
+            openList();
+          }
+        } catch (error) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "failed to find events",
+            showConfirmButton: false,
+            timer: 1500,
+            customClass: {
+              container: "sweetalert-z-index",
+            },
+          });
+        }
       }
     } else {
       Swal.fire({
@@ -83,6 +111,13 @@ export default function CustomizedDialogs() {
 
   return (
     <React.Fragment>
+      <LoadingGif loading={loading} />
+      <EventList
+        open={listShown}
+        startDate={startDate}
+        endDate={endDate}
+        closeList={closeList}
+      />
       <Button variant="outlined" onClick={handleClickOpen}>
         התחל בחיפוש
       </Button>
