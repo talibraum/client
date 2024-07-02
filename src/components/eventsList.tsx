@@ -8,12 +8,15 @@ import Typography from "@mui/material/Typography";
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import Box from "@mui/material/Box";
 import { Dayjs } from "dayjs";
+import EnhancedTable from "./eventTable";
 import "./modal.css";
+import Event from "../event.entity";
 
 interface propsForEventsList {
   open: boolean;
   startDate: Dayjs | null;
-  endDate: Dayjs | null;
+  endDate: Dayjs | null; 
+  events:Event[];
   closeList: () => void;
 }
 
@@ -21,6 +24,7 @@ export default function EventList({
   open,
   startDate,
   endDate,
+  events,
   closeList,
 }: propsForEventsList) {
   const handleClose = () => {
@@ -34,6 +38,10 @@ export default function EventList({
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
+        fullWidth={true}
+        maxWidth="md"  
+        sx={{ "& .MuiDialog-paper": { width: "100%", maxWidth: "none" } }}
+        
       >
         <CloseIcon onClick={handleClose} className="close-button" />
 
@@ -53,7 +61,7 @@ export default function EventList({
             <Grid
               container
               direction="row"
-              justifyContent="space-between"
+              justifyContent="space-evenly"
               alignItems="center"
             >
               <Grid >
@@ -70,7 +78,11 @@ export default function EventList({
                 </Typography>
               </Grid>
             </Grid>
+            <EnhancedTable         events={events}
+            />
+
           </Box>
+
         </DialogContent>
       </Dialog>
     </React.Fragment>
