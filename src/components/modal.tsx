@@ -79,6 +79,7 @@ export default function CustomizedDialogs() {
             openList();
           }
         } catch (error) {
+          setLoading(false);
           Swal.fire({
             icon: "error",
             title: "Error",
