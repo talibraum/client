@@ -12,6 +12,7 @@ import Box from "@mui/material/Box";
 import { Dayjs } from "dayjs";
 import "./modal.css";
 import { ApiService } from "../data/api";
+import Swal from "sweetalert2";
 
 export default function CustomizedDialogs() {
   const [open, setOpen] = React.useState(true);
@@ -33,18 +34,47 @@ export default function CustomizedDialogs() {
     if (startDateInMilliseconds !== null && endDateInMilliseconds !== null) {
       try {
         const response = await ApiService.Events.getEventsBetweenDates(
-          0,
-          1719216726488
+          startDateInMilliseconds,
+          endDateInMilliseconds
         );
-        setEvents(response.data);
-        console.log("Start Date in milliseconds:", startDateInMilliseconds);
-        console.log("End Date in milliseconds:", endDateInMilliseconds);
+        if ((response.data).length === 0) {
+          Swal.fire({
+            icon: "info",
+            text: "no events were found between these dates",
+            showConfirmButton: false,
+            timer: 2000,
+            customClass: {
+              container: "sweetalert-z-index",
+            },
+          });
+        } else {
+          setEvents(response.data);
+          setOpen(false);
+        }
       } catch (error) {
-        console.error("Failed to fetch events:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "failed to find events",
+          showConfirmButton: false,
+          timer: 1500,
+          customClass: {
+            container: "sweetalert-z-index",
+          },
+        });
       }
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "please fill in all fields",
+        showConfirmButton: false,
+        timer: 1500,
+        customClass: {
+          container: "sweetalert-z-index",
+        },
+      });
     }
-
-    setOpen(false);
   };
 
   React.useEffect(() => {
@@ -71,8 +101,11 @@ export default function CustomizedDialogs() {
           select date range
         </DialogTitle>
 
-        <DialogContent className="dialog-content" sx={{ justifyContent: "center" }}>
-          <Box sx={{ width: "100%" ,justifyContent: "center"}}>
+        <DialogContent
+          className="dialog-content"
+          sx={{ justifyContent: "center" }}
+        >
+          <Box sx={{ width: "100%", justifyContent: "center" }}>
             <Grid
               container
               maxWidth="sm"

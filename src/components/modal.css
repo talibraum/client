@@ -23,3 +23,6 @@
     padding: 16px 24px; 
   }
   
+  .sweetalert-z-index {
+    z-index: 200000 !important;
+  }
