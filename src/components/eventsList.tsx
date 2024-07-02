@@ -4,10 +4,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import CloseIcon from "@mui/icons-material/Close";
 import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import Box from "@mui/material/Box";
 import { Dayjs } from "dayjs";
 import "./modal.css";
-
 
 interface propsForEventsList {
   open: boolean;
@@ -25,6 +26,7 @@ export default function EventList({
   const handleClose = () => {
     closeList();
   };
+  
 
   return (
     <React.Fragment>
@@ -40,7 +42,7 @@ export default function EventList({
           id="customized-dialog-title"
           className="dialog-title"
         >
-          select date mklmlk
+          events between
         </DialogTitle>
 
         <DialogContent
@@ -50,10 +52,24 @@ export default function EventList({
           <Box sx={{ width: "100%", justifyContent: "center" }}>
             <Grid
               container
-              maxWidth="sm"
-              rowSpacing={2}
-              sx={{ width: "100%", justifyContent: "center" }}
-            ></Grid>
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Grid >
+                <Typography fontSize={20} gutterBottom>
+                  {startDate ? startDate.format("YYYY-MM-DD") : "Start date not set"}
+                </Typography>
+              </Grid>
+              <Grid >
+                <ArrowForwardRoundedIcon/>
+              </Grid>
+              <Grid >
+                <Typography  fontSize={20} gutterBottom>
+                  {endDate ? endDate.format("YYYY-MM-DD") : "End date not set"}
+                </Typography>
+              </Grid>
+            </Grid>
           </Box>
         </DialogContent>
       </Dialog>
