@@ -117,6 +117,7 @@ export default function CustomizedDialogs() {
         open={listShown}
         startDate={startDate}
         endDate={endDate}
+        events={events}
         closeList={closeList}
       />
       <Button variant="outlined" onClick={handleClickOpen}>
