@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 import BasicModal from "./components/modal";
 
@@ -6,9 +5,13 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>חיפוש מתקדם</p>
+        <p>howdy!!!</p>
         <BasicModal />
+        <img
+          src="https://media.tenor.com/Br6q_Zuw7NkAAAAi/pusheen-cowboy.gif"
+          className="App-logo"
+          alt="Animated GIF"
+        />
       </header>
     </div>
   );
